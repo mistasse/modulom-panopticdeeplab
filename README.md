@@ -9,13 +9,13 @@ ModulOM is a first step towards Output Mathematics (OM) that are manageable to b
 
 We denote Output Mathematics the set of math formulas that surround the neural network to make it solve a task. We consider at least the following to be part of it:
 
-- the processing of the network outputs to be turned into meaningful predictions
-- the loss, as it shapes the feedback giving meaning to the network's outputs, and has to be consistent with the output processing
+- the decoding of the network outputs to be turned into meaningful predictions
+- the loss, as it shapes the feedback giving meaning to the network's outputs, and has to be consistent with the output decoding
 - the ground-truth generation from the annotations, as it has to be consistent with the losses
 
-We don't know yet if its responsibilities stop there. In case multiple neural networks are involved (e.g. GANs), it could encompass the routing between those networks as well. In case of transformers, it could acquire the responsibilities of preprocessing the signal and feeding it to the network. In the same vein, data augmentation could probably be part of it, although we didn't really believe it to be valuable in our case.
+We don't know yet if its responsibilities stop there. In case multiple neural networks are involved (e.g. GANs), it could encompass the routing of data between those networks as well. In case of transformers, it could acquire the responsibilities of preprocessing the signal and feeding it to the network.
 
-It should probably encompass everything you consider as being part of the "mathematical system" of your method. We also propose to code code and the mathematical system jointly such as in the illustration that follows.
+It should probably encompass everything you consider as being part of the "mathematical system" of your method. We also propose to document code and the mathematical system jointly, as we did for instance with the illustration that follows.
 
 <a href="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"><img src="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"/></a>
 
@@ -76,6 +76,8 @@ Listed below are the main modifications brought to the Panoptic-Deeplab codebase
 - File an issue here
 - maxime (DOT) istasse (AT) (UCLouvain in lower case) (DOT) be
 
+---
+# Here below is the original Panoptic-Deeplab README
 ---
 
 # Panoptic-DeepLab (CVPR 2020)
