@@ -1,5 +1,5 @@
 # ModulOM (RethinkingMLPapers2021) over Panoptic-Deeplab (CVPR 2020)
-[OpenReview](https://openreview.net/forum?id=264iXDLnD59) |  [Poster](docs/modulom_poster.png)
+[OpenReview](https://openreview.net/forum?id=264iXDLnD59) |  [Poster](https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/modulom_poster.png?raw=true)
 
 The Modular Output Mathematics (ModulOM) is a component proposed in the the following paper: [ModulOM: Disseminating Deep Learning Research with Modular Output Mathematics](https://openreview.net/forum?id=264iXDLnD59). This repository, derived from [the public Panoptic-Deeplab reimplementation by its original author](https://github.com/bowenc0221/panoptic-deeplab), is meant to accompany our paper to illustrate ModulOM applied on some use case. For more information on the latter, please have a look at [the Panoptic-Deeplab paper](https://arxiv.org/abs/1911.10194) or at the second part of this README. This code is be released publicly under the Apache License 2.0. [Here below](#main-modifications-to-the-code-base) is a list of the main modifications involved to the code base.
 
@@ -15,7 +15,9 @@ We denote Output Mathematics the set of math formulas that surround the neural n
 
 We don't know yet if its responsibilites stop there. In case multiple neural networks are involved (e.g. GANs), it could encompass the routing between those networks as well. In case of transformers, it could acquire the responsibilities of preprocessing the signal and feeding it to the network. In the same vein, data augmentation could probably be part of it, although we didn't really believe it to be valuable in our case.
 
-It should probably encompass everything you consider as being part of the "mathematical system" of your method.
+It should probably encompass everything you consider as being part of the "mathematical system" of your method. We also propose to code code and the mathematical system jointly such as in the following illustration.
+
+<a href="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"><img src="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"/></a>
 
 ## Does it not violate the "single responsibility principle"?
 
