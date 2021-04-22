@@ -51,7 +51,7 @@ We believe this incompatibility is only a question of time, because the support 
 
 ## Main modifications to the code base
 Listed below are the main modifications brought to the Panoptic-Deeplab codebase:
-- An "OM" section has been added to the configuration, and the `segmentation.model.output_math` module has been created, containing the output mathematics as well as most of the mechanisms enabling it.
+- An "OM" section has been added to the configuration, and the [`segmentation.model.output_math` module](https://github.com/mistasse/modulom-panopticdeeplab/tree/master/segmentation/model/output_math) has been created, containing:
 - When `OM.NAME` is defined, the model is wrapped into a [MetaArchitectureWrapper]() that returns an OM object instead of a dictionary. (but OM exposes the same elements for compatibility)
   - `OM.NAME` can currently be set to `'panoptic-deeplab'` to use the `PanDLBase` OM class.
 - If `OM.NAME` and `OM.MIXINS` are defined, the definitive OM class will inherit classes specified within `OM.MIXINS`
@@ -61,7 +61,7 @@ Listed below are the main modifications brought to the Panoptic-Deeplab codebase
 
 ## Cite ModulOM
 
-```
+```BibTeX
 @inproceedings{istasse2021modulom,
   title={Modul{OM}: Disseminating Deep Learning Research with Modular Output Mathematics},
   author={Maxime Istasse and Kim Mens and Christophe De Vleeschouwer},
