@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # Panoptic-DeepLab meta architecture.
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 from collections import OrderedDict
@@ -121,6 +122,7 @@ class PanopticDeepLab(BaseSegmentationModel):
                 # Pixel-wise loss weight
                 offset_loss_weights = targets['offset_weights'][:, None, :, :].expand_as(results['offset'])
                 offset_loss = self.offset_loss(results['offset'], targets['offset']) * offset_loss_weights
+                # print("vanilla offset loss shape", offset_loss.shape, offset_loss_weights.shape)
                 # safe division
                 if offset_loss_weights.sum() > 0:
                     offset_loss = offset_loss.sum() / offset_loss_weights.sum() * self.offset_loss_weight

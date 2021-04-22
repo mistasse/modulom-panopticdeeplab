@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # Loads Cityscapes panoptic dataset.
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 import json
@@ -62,6 +63,7 @@ class CityscapesPanoptic(Cityscapes):
                  ignore_stuff_in_offset=False,
                  small_instance_area=0,
                  small_instance_weight=1,
+                 pan_only=False,
                  **kwargs):
         super(CityscapesPanoptic, self).__init__(root, split, is_train, crop_size, mirror, min_scale, max_scale,
                                                  scale_step_size, mean, std)
@@ -106,7 +108,8 @@ class CityscapesPanoptic(Cityscapes):
             self.target_transform = PanopticTargetGenerator(self.ignore_label, self.rgb2id, _CITYSCAPES_THING_LIST,
                                                             sigma=8, ignore_stuff_in_offset=ignore_stuff_in_offset,
                                                             small_instance_area=small_instance_area,
-                                                            small_instance_weight=small_instance_weight)
+                                                            small_instance_weight=small_instance_weight,
+                                                            pan_only=pan_only)
         # Generates semantic label for evaluation.
         self.raw_label_transform = SemanticTargetGenerator(self.ignore_label, self.rgb2id)
 

@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # Builds dataloader.
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 import logging
@@ -56,7 +57,8 @@ def build_dataset_from_cfg(config, is_train=True):
             semantic_only=config.DATASET.SEMANTIC_ONLY,
             ignore_stuff_in_offset=config.DATASET.IGNORE_STUFF_IN_OFFSET,
             small_instance_area=config.DATASET.SMALL_INSTANCE_AREA,
-            small_instance_weight=config.DATASET.SMALL_INSTANCE_WEIGHT
+            small_instance_weight=config.DATASET.SMALL_INSTANCE_WEIGHT,
+            pan_only=config.DATASET.PAN_ONLY
         ),
         'coco_panoptic': dict(
             root=config.DATASET.ROOT,
@@ -75,7 +77,8 @@ def build_dataset_from_cfg(config, is_train=True):
             semantic_only=config.DATASET.SEMANTIC_ONLY,
             ignore_stuff_in_offset=config.DATASET.IGNORE_STUFF_IN_OFFSET,
             small_instance_area=config.DATASET.SMALL_INSTANCE_AREA,
-            small_instance_weight=config.DATASET.SMALL_INSTANCE_WEIGHT
+            small_instance_weight=config.DATASET.SMALL_INSTANCE_WEIGHT,
+            pan_only=config.DATASET.PAN_ONLY
         ),
     }
 

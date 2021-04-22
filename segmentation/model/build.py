@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # Builds model.
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 import torch
@@ -8,6 +9,7 @@ import torch
 from .backbone import resnet, mobilenet, mnasnet, hrnet, xception
 from .meta_arch import DeepLabV3, DeepLabV3Plus, PanopticDeepLab
 from .loss import RegularCE, OhemCE, DeepLabCE, L1Loss, MSELoss, CrossEntropyLoss
+from .output_math import wrap_meta_architecture, build_output_mathematics_class
 
 
 def build_segmentation_model_from_cfg(config):
@@ -99,7 +101,13 @@ def build_segmentation_model_from_cfg(config):
     else:
         raise ValueError('Unknown meta backbone {}, please first implement it.'.format(config.MODEL.BACKBONE.META))
 
-    model = model_map[config.MODEL.META_ARCHITECTURE](
+    model_class = model_map[config.MODEL.META_ARCHITECTURE]
+
+    if config.OM.BASE:
+        om_class = build_output_mathematics_class(config)
+        model_class = wrap_meta_architecture(model_class, om_class)
+
+    model = model_class(
         backbone,
         **model_cfg[config.MODEL.META_ARCHITECTURE]
     )

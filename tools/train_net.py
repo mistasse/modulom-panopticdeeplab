@@ -3,6 +3,7 @@
 # Example command:
 # python -m torch.distributed.launch --nproc_per_node=4 tools/train_net.py --cfg PATH_TO_CONFIG_FILE
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by  Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 import argparse
@@ -42,6 +43,13 @@ def parse_args():
                         help="Modify config options using the command-line",
                         default=None,
                         nargs=argparse.REMAINDER)
+    parser.add_argument('--timing',
+                        help="Whether to log timing",
+                        default=False, action="store_true")
+    parser.add_argument('--gpumem',
+                        help="Whether to log gpumem",
+                        default=False, action="store_true")
+
 
     args = parser.parse_args()
     update_config(config, args)
@@ -139,11 +147,21 @@ def main():
             data = next(data_loader_iter)
             if not distributed:
                 data = to_cuda(data, device)
-            data_time.update(time.time() - start_time)
+            _data_time = time.time()
+            data_time.update(_data_time - start_time)
 
             image = data.pop('image')
             out_dict = model(image, data)
+
             loss = out_dict['loss']
+
+            torch.cuda.synchronize(device)
+            _forward_time = time.time()
+            if args.gpumem:
+                gpumem = torch.cuda.memory_allocated(device)
+                peak_usage = torch.cuda.max_memory_allocated(device)
+                torch.cuda.reset_peak_memory_stats(device)
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -151,8 +169,17 @@ def main():
             lr = optimizer.param_groups[best_param_group_id]["lr"]
             lr_scheduler.step()
 
-            batch_time.update(time.time() - start_time)
+            _batch_time = time.time()
+            batch_time.update(_batch_time - start_time)
             loss_meter.update(loss.detach().cpu().item(), image.size(0))
+
+            if args.timing:
+                logger.info('timing - forward %f' % (_forward_time - _data_time))
+                logger.info('timing - both %f' % (_batch_time - _data_time))
+            if args.gpumem:
+                logger.info('gpumem - %f' % gpumem)
+                logger.info('gpumem - peak %f' % peak_usage)
+
 
             if i == 0 or (i + 1) % config.PRINT_FREQ == 0:
                 msg = '[{0}/{1}] LR: {2:.7f}\t' \
@@ -162,18 +189,21 @@ def main():
                 msg += get_loss_info_str(get_module(model, distributed).loss_meter_dict)
                 logger.info(msg)
             if i == 0 or (i + 1) % config.DEBUG.DEBUG_FREQ == 0:
-                if comm.is_main_process() and config.DEBUG.DEBUG:
-                    save_debug_images(
-                        dataset=data_loader.dataset,
-                        batch_images=image,
-                        batch_targets=data,
-                        batch_outputs=out_dict,
-                        out_dir=debug_out_dir,
-                        iteration=i,
-                        target_keys=config.DEBUG.TARGET_KEYS,
-                        output_keys=config.DEBUG.OUTPUT_KEYS,
-                        iteration_to_remove=i - config.DEBUG.KEEP_INTERVAL
-                    )
+                # TODO: Add interface for save_debug_images
+                # if comm.is_main_process() and config.DEBUG.DEBUG:
+                #     save_debug_images(
+                #         dataset=data_loader.dataset,
+                #         batch_images=image,
+                #         batch_targets=data,
+                #         batch_outputs=out_dict,
+                #         out_dir=debug_out_dir,
+                #         iteration=i,
+                #         target_keys=config.DEBUG.TARGET_KEYS,
+                #         output_keys=config.DEBUG.OUTPUT_KEYS,
+                #         iteration_to_remove=i - config.DEBUG.KEEP_INTERVAL
+                #     )
+                if i>0 and (args.gpumem or args.timing):
+                    break
             if i == 0 or (i + 1) % config.CKPT_FREQ == 0:
                 if comm.is_main_process():
                     torch.save({

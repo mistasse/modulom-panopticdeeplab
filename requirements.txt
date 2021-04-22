@@ -5,3 +5,5 @@ Pillow
 tabulate
 termcolor
 fvcore
+pytest
+pycocotools

@@ -34,6 +34,13 @@ _C.MODEL.WEIGHTS = ''
 
 _C.MODEL.BN_MOMENTUM = 0.1
 
+# -----------------------------------------------------------------------------
+# Output Mathematics
+# -----------------------------------------------------------------------------
+_C.OM = CN()
+_C.OM.BASE = None
+_C.OM.MIXINS = ()
+
 # ---------------------------------------------------------------------------- #
 # Backbone options
 # ---------------------------------------------------------------------------- #
@@ -125,6 +132,7 @@ _C.MODEL.PANOPTIC_DEEPLAB.INSTANCE.FOREGROUND_ARCH = 'v1'
 _C.DATASET = CN()
 _C.DATASET.ROOT = './datasets/cityscapes'
 _C.DATASET.DATASET = 'cityscapes'
+_C.DATASET.FIRST_THING_CLASS = 11
 _C.DATASET.NUM_CLASSES = 19
 _C.DATASET.TRAIN_SPLIT = 'train'
 _C.DATASET.TEST_SPLIT = 'val'
@@ -139,6 +147,7 @@ _C.DATASET.SEMANTIC_ONLY = False
 _C.DATASET.IGNORE_STUFF_IN_OFFSET = True
 _C.DATASET.SMALL_INSTANCE_AREA = 0
 _C.DATASET.SMALL_INSTANCE_WEIGHT = 1
+_C.DATASET.PAN_ONLY = False
 
 _C.DATASET.MIN_RESIZE_VALUE = -1
 _C.DATASET.MAX_RESIZE_VALUE = -1

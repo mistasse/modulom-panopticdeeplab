@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------------------
 # Generates targets for Panoptic-DeepLab.
 # Written by Bowen Cheng (bcheng9@illinois.edu)
+# Modified by Maxime Istasse (maxime.istasse@uclouvain.be)
 # ------------------------------------------------------------------------------
 
 import numpy as np
@@ -25,7 +26,8 @@ class PanopticTargetGenerator(object):
             crowd region is ignored in the original TensorFlow implementation.
     """
     def __init__(self, ignore_label, rgb2id, thing_list, sigma=8, ignore_stuff_in_offset=False,
-                 small_instance_area=0, small_instance_weight=1, ignore_crowd_in_semantic=False):
+                 small_instance_area=0, small_instance_weight=1, ignore_crowd_in_semantic=False,
+                 pan_only=False):
         self.ignore_label = ignore_label
         self.rgb2id = rgb2id
         self.thing_list = thing_list
@@ -40,6 +42,7 @@ class PanopticTargetGenerator(object):
         y = x[:, np.newaxis]
         x0, y0 = 3 * sigma + 1, 3 * sigma + 1
         self.g = np.exp(- ((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
+        self.pan_only = pan_only
 
     def __call__(self, panoptic, segments):
         """Generates the training target.
@@ -67,6 +70,8 @@ class PanopticTargetGenerator(object):
                     regression 0 is ignore, 1 is has instance. Multiply this mask to loss.
         """
         panoptic = self.rgb2id(panoptic)
+        if self.pan_only:
+            return dict(panoptic=torch.as_tensor(panoptic.astype('long'))[None])
         height, width = panoptic.shape[0], panoptic.shape[1]
         semantic = np.zeros_like(panoptic, dtype=np.uint8) + self.ignore_label
         foreground = np.zeros_like(panoptic, dtype=np.uint8)
@@ -148,9 +153,10 @@ class PanopticTargetGenerator(object):
 
         return dict(
             semantic=torch.as_tensor(semantic.astype('long')),
+            panoptic=torch.as_tensor(panoptic.astype('long'))[None],
             foreground=torch.as_tensor(foreground.astype('long')),
             center=torch.as_tensor(center.astype(np.float32)),
-            center_points=center_pts,
+            # center_points=center_pts,
             offset=torch.as_tensor(offset.astype(np.float32)),
             semantic_weights=torch.as_tensor(semantic_weights.astype(np.float32)),
             center_weights=torch.as_tensor(center_weights.astype(np.float32)),
