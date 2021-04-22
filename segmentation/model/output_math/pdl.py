@@ -160,20 +160,14 @@ class PanDLGroundtruth(PanopticVariables):
             for i in self.unique_ins_truth(True)[b]:
                 y, x = centroids[b][i].tolist()
                 # Clip x and y within the image
-                #  0123
-                #  a   b      => a=0 b=3
                 y, x = np.clip(y, 0, H), np.clip(x, 0, W)
                 # Compute bounds
-                #   0123   7
-                # c a  b   d   => c=-2 d=7
                 y1, x1 = int(y)-margin, int(x)-margin
                 y2, x2 = y1+gH, x1+gW
-                # Compute offset to border
-                #   0123   7
-                # c a  b   d   => c:2 d:7-4
+                # Compute kernel truncation
                 cy1, cy2 = 0-min(y1,0), H-max(y2,H)
                 cx1, cx2 = 0-min(x1,0), W-max(x2,W)
-                # c=0  b=4
+                # Truncate the target region as well
                 y1, x1 = y1+cy1, x1+cx1
                 y2, x2 = y2+cy2, x2+cx2
 
@@ -368,22 +362,6 @@ class CPUComputedTensors(PanDLLosses, PanDLGroundtruth):
     @utils.override(PanDLLosses.center_weights)
     def center_weights(self):
         return self.raw_batch['center_weights_truth'][:,None]
-
-
-class CityscapesClasses(PanopticVariables):
-    _TRAIN_ID_TO_EVAL_ID = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
-    _EVAL_ID_TO_TRAIN_ID = {v: k for k, v  in enumerate(_TRAIN_ID_TO_EVAL_ID)}
-    @utils.override(PanopticVariables.semantic_truth)
-    def semantic_truth(self, mode='id'):
-        if mode == 'id':
-            base_sem = super().semantic_truth()
-            new_sem = torch.zeros_like(base_sem)
-            for base_id, new_id in self._EVAL_ID_TO_TRAIN_ID.items():
-                new_sem[base_sem == base_id] = new_id
-            return new_sem
-        if mode == '_id':
-            return super().semantic_truth()
-        return super().semantic_truth(mode)
 
 
 class CityscapesClasses(PanopticVariables):

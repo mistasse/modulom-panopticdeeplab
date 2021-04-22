@@ -396,5 +396,3 @@ def test_learnable_centers_no_instances():
     assert batch.semantic_loss() == 0
     assert batch.center_loss() == 0
     assert batch.offset_loss() == 0
-
-    assert False
