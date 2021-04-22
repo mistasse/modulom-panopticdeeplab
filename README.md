@@ -1,9 +1,9 @@
 # ModulOM (RethinkingMLPapers2021) over Panoptic-Deeplab (CVPR 2020)
 [OpenReview](https://openreview.net/forum?id=264iXDLnD59) |  [Poster](https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/modulom_poster.png?raw=true)
 
-The Modular Output Mathematics (ModulOM) is a component proposed in the the following paper: [ModulOM: Disseminating Deep Learning Research with Modular Output Mathematics](https://openreview.net/forum?id=264iXDLnD59). This repository, derived from [the public Panoptic-Deeplab reimplementation by its original author](https://github.com/bowenc0221/panoptic-deeplab), is meant to accompany our paper to illustrate ModulOM applied on some use case. For more information on the latter, please have a look at [the Panoptic-Deeplab paper](https://arxiv.org/abs/1911.10194) or at the second part of this README. This code is be released publicly under the Apache License 2.0. [Here below](#main-modifications-to-the-code-base) is a list of the main modifications involved to the code base.
+ModulOM (for MODULar Output Mathematics) is proposed in the the following paper: [ModulOM: Disseminating Deep Learning Research with Modular Output Mathematics](https://openreview.net/forum?id=264iXDLnD59). This repository, derived from [the public Panoptic-Deeplab reimplementation by its original author](https://github.com/bowenc0221/panoptic-deeplab), is meant to accompany our paper to illustrate ModulOM applied on some use case. For more information on Panoptic-Deeplab, please have a look at [the Panoptic-Deeplab paper](https://arxiv.org/abs/1911.10194) or at the second part of this README. This code is be released publicly under the Apache License 2.0. [Here below](#main-modifications-to-the-code-base) is a list of the main modifications involved to the code base.
 
-ModulOM is a first step towards Output Mathematics (OM) that are manageable to build atomic increments upon, to probe, and to transplant from one code base to another. We strongly believe it constitutes a way to make OM shareable, plug-and-play components of Deep Learning experiments, just like optimizers, neural architectures, data-augmentation pipelines, ...
+ModulOM is a first step towards Output Mathematics (OM) that are manageable to build atomic increments upon, to probe, and to transplant from one code base to another. The code implementing losses, the decoding process and target maps (what we consider as the simplest case of OM) is usually intricated because of inter-dependencies between those components, making it is difficult to impact them in a consistent fashion. We strongly believe ModulOM constitutes a way to make OM another shareable, plug-and-play component of Deep Learning experiments, just like optimizers, neural architectures, data-augmentation pipelines, ...
 
 ## What are Output Mathematics?
 
@@ -13,19 +13,19 @@ We denote Output Mathematics the set of math formulas that surround the neural n
 - the loss, as it shapes the feedback giving meaning to the network's outputs, and has to be consistent with the output processing
 - the ground-truth generation from the annotations, as it has to be consistent with the losses
 
-We don't know yet if its responsibilites stop there. In case multiple neural networks are involved (e.g. GANs), it could encompass the routing between those networks as well. In case of transformers, it could acquire the responsibilities of preprocessing the signal and feeding it to the network. In the same vein, data augmentation could probably be part of it, although we didn't really believe it to be valuable in our case.
+We don't know yet if its responsibilities stop there. In case multiple neural networks are involved (e.g. GANs), it could encompass the routing between those networks as well. In case of transformers, it could acquire the responsibilities of preprocessing the signal and feeding it to the network. In the same vein, data augmentation could probably be part of it, although we didn't really believe it to be valuable in our case.
 
-It should probably encompass everything you consider as being part of the "mathematical system" of your method. We also propose to code code and the mathematical system jointly such as in the following illustration.
+It should probably encompass everything you consider as being part of the "mathematical system" of your method. We also propose to code code and the mathematical system jointly such as in the illustration that follows.
 
 <a href="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"><img src="https://github.com/mistasse/modulom-panopticdeeplab/blob/master/docs/om_panopticdeeplab_doc.png?raw=true"/></a>
 
 ## Does it not violate the "single responsibility principle"?
 
-Modular output mathematics can be built from many from smaller building blocks themselves which can have single responsibilities. So it is probably specific to every implementation. We tried for this code base to provide a nice example of what a single responsibility modules can look like when describing such mathematical systems.
+Modular output mathematics can be built from many from smaller building blocks themselves which can have single responsibilities. So it is probably specific to every implementation. We tried for this code base to provide a nice example of what a single responsibility modules can look like when describing such mathematical systems. (see the blocks in the illustration above)
 
 ## Does wrapping more responsibilities inside ModulOM render existing components that address them useless?
 
-Definitely not. Just like we wouldn't include the code of the neural network inside the OM component, but feed it inputs and collect its outputs. Existing modules for losses, decoding, data-augmentation, *etc* are still useful to interchange blocks within the OM which have a fixed interface.
+Definitely not. Just like we wouldn't include the code of the neural network inside the OM code, but feed it inputs and collect its outputs. Existing modules for losses, decoding, data-augmentation, *etc* are still useful to interchange blocks within the OM which have a fixed interface.
 
 If your criterion is a L1Loss or a L2Loss, you can call it from inside a, let's say, `OutputMath.loss()` method. Yet, other people can still deviate from calling a L1Loss-like module if more complex data flow is needed by overriding `OutputMath.loss()`.
 
